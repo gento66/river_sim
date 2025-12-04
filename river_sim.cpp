@@ -8,7 +8,7 @@
 #include "mix_image.h"
 #include "simulate.h"
 
-
+//test
 
 #include <iostream>
 #include <fstream>
@@ -502,7 +502,7 @@ int main() {
         }
 
 
-
+       
         //更新処理
         vector<vector<double>> surface = TotalHeight(data, water, width, height); // totalHeight
         vector<vector<double>> wa_slope = makeSlope(surface, width, height); // 更新傾斜
