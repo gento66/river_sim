@@ -14,6 +14,15 @@ void simulateWaterFlow(vector<vector<double>>& water, const vector<vector<int>>&
             double h = water[y][x]; // êÖÇÃçÇÇ≥
             if (h <= 1e-6) continue; // 1É mñ¢ñûÇÕêÖÇ»ÇµÇ∆Ç∑ÇÈÅiÅ‡ 0.0 Ç∆Ç›Ç»Ç∑Åj
 
+            double s8 = 0.0;// vec
+            // 8ï˚å¸ÇÃåXéŒÇãÅÇﬂÇÈ
+            for (int i = 1; i <= 8; i++) {
+                //ggg
+
+            }
+
+
+
             // ó¨å¸Ç…è]Ç¡Çƒà⁄ìÆ
             int dir = flowDir[y][x];
             int targetX = x;

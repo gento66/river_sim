@@ -1,4 +1,4 @@
-﻿// D8の完成形だと思う
+﻿// MD8をやろう
 //
 
 #define _CRT_SECURE_NO_WARNINGS
@@ -488,18 +488,19 @@ int main() {
         //    }
         //}
 
-        if (t == 0) {
-            // 水深高画像
-            //string filename1 = "image/water_step_" + to_string(t + 1) + ".png";
-            ostringstream oss;
-            oss << "image/water_step_" << setw(4) << setfill('0') << (t) << ".png";
-            string filename1 = oss.str();
-            saveWaterDepthAsImage(water, filename1); //水深画像の生成します
+        //// 0ステップ目のやつ
+        //if (t == 1) {
+        //    // 水深高画像
+        //    //string filename1 = "image/water_step_" + to_string(t + 1) + ".png";
+        //    ostringstream oss;
+        //    oss << "image/water_step_" << setw(4) << setfill('0') << (t) << ".png";
+        //    string filename1 = oss.str();
+        //    saveWaterDepthAsImage(water, filename1); //水深画像の生成します
 
-            // 地形 + 水深 の画像
-            string filename2 = "image2/mix_step_" + to_string(t) + ".png";
-            MixImage("image/dem_output.png", filename1, filename2);
-        }
+        //    // 地形 + 水深 の画像
+        //    string filename2 = "image2/mix_step_" + to_string(t) + ".png";
+        //    MixImage("image/dem_output.png", filename1, filename2);
+        //}
 
 
        
