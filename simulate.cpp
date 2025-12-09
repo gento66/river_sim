@@ -54,6 +54,8 @@ void simulateWaterFlow(vector<vector<double>>& water, const vector<vector<int>>&
                 ok++;
             }
 
+            if (outFlow > dh / 2) outFlow = dh / 2;// 不自然な流量をなくす
+
 
 
             // 自分の水を減らし、流出先に加算
