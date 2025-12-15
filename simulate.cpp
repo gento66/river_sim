@@ -8,6 +8,7 @@ void simulateWaterFlow(vector<vector<double>>& water, const vector<vector<int>>&
     // 一時的な更新用マップ（新しい水量を入れておく）
     vector<vector<double>> nextWater = water; // 更新するための配列
 
+    int ss = 0;
     int ok = 0;
     for (int y = 1; y < height - 1; ++y) {
         for (int x = 1; x < width - 1; ++x) {
@@ -54,7 +55,11 @@ void simulateWaterFlow(vector<vector<double>>& water, const vector<vector<int>>&
                 ok++;
             }
 
-            if (outFlow > dh / 2) outFlow = dh / 2;// 不自然な流量をなくす
+            
+            if (outFlow > dh / 2) {
+                outFlow = dh / 2;// 不自然な流量をなくす
+                ss++;
+            }
 
 
 
@@ -64,6 +69,7 @@ void simulateWaterFlow(vector<vector<double>>& water, const vector<vector<int>>&
         }
     }
     cout << "overwater_h:" << ok << "\n";
+    cout << "ss:" << ss << "\n";
     // 結果を water に上書き
     water = nextWater;
 }
