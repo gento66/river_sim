@@ -557,17 +557,42 @@ int main() {
         //    }
         //}
 
-        if ((t + 1) % 25 == 0) {
-            if ((t + 1) > 1000 && (t + 1) % 2 != 0) continue;
-            // 水深高画像
-            //string filename1 = "image/water_step_" + to_string(t + 1) + ".png";
-            ostringstream oss;
-            oss << "image/water_step_" << setw(4) << setfill('0') << (t + 1) << ".png";
-            string filename1 = oss.str();
-            saveWaterDepthAsImage(water, filename1); //水深画像の生成します
+        //if ((t + 1) % 25 == 0) {
+        //    if ((t + 1) > 1000 && (t + 1) % 2 != 0) continue;
+        //    // 水深高画像
+        //    //string filename1 = "image/water_step_" + to_string(t + 1) + ".png";
+        //    ostringstream oss;
+        //    oss << "image/water_step_" << setw(4) << setfill('0') << (t + 1) << ".png";
+        //    string filename1 = oss.str();
+        //    saveWaterDepthAsImage(water, filename1); //水深画像の生成します
 
-            // 地形 + 水深 の画像
-            string filename2 = "image2/mix_step_" + to_string(t + 1) + ".png";
+        //    // 地形 + 水深 の画像
+        //    string filename2 = "image2/mix_step_" + to_string(t + 1) + ".png";
+        //    MixImage("image/dem_output.png", filename1, filename2);
+        //}
+
+        int step = t + 1;
+        bool save = false;
+
+        if (step <= 400) {
+            save = (step % 10 == 0);
+        }
+        else if (step <= 1000) {
+            save = (step % 25 == 0);
+        }
+        else {
+            save = (step % 50 == 0);
+        }
+
+        if (save) {
+            // ===== 保存処理 =====
+
+            ostringstream oss;
+            oss << "image/water_step_" << setw(4) << setfill('0') << step << ".png";
+            string filename1 = oss.str();
+            saveWaterDepthAsImage(water, filename1);
+
+            string filename2 = "image2/mix_step_" + to_string(step) + ".png";
             MixImage("image/dem_output.png", filename1, filename2);
         }
 
