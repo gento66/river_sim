@@ -11,10 +11,8 @@ void simulateWaterFlow(vector<vector<double>>& water, const vector<vector<int>>&
     // 一時的な更新用マップ（新しい水量を入れておく）
     vector<vector<double>> nextWater = water; // 更新するための配列
 
-
     const double dist[8] = { 1.0, M_SQRT2, 1.0, M_SQRT2, 1.0, M_SQRT2, 1.0, M_SQRT2 };
-
-
+    const double dx = 5.0;
 
     int overCapCount = 0;
 
@@ -37,7 +35,7 @@ void simulateWaterFlow(vector<vector<double>>& water, const vector<vector<int>>&
                 double dh = surface[y][x] - surface[ny][nx];
                 dhs[i] = dh;
                 if (dh > 0.0) {
-                    double s = dh / (5 * dist[i]);
+                    double s = dh / (dx * dist[i]);
                     slopes[i] = s;
                     S_total += s;
                     ++validDirs;
@@ -54,35 +52,28 @@ void simulateWaterFlow(vector<vector<double>>& water, const vector<vector<int>>&
 
             // 2)各方向の比率を求め、セルの水を分配
             // depth_i = h * (slopes[i] / S_total)
-            double depthPot[8]; //流量の計算
-            double depthSum = 0.0; //総流量
+            //double depthPot[8]; //流量の計算
+            //double depthSum = 0.0; //総流量
+            double caps[8]; //移動量の中継
+
+            double Srep = S_total / validDirs; // 有効傾斜の平均値
+            if (Srep < 1e-8) continue;
+
+            double v = (1.0 / n) * pow(h, 2.0 / 3.0) * sqrt(Srep); // マニング
+
+            double fraction = v * DT / dx;
+            fraction = clamp(fraction, 0.0, 0.5);
+
+            double Q_total = h * fraction;
+
             for (int i = 0; i < 8; ++i) {
-                if (slopes[i] <= 0.0) { depthPot[i] = 0.0; continue; }
-                depthPot[i] = h * (slopes[i] / S_total);
-                depthSum += depthPot[i];
+                if (slopes[i] > 0.0)
+                    caps[i] = Q_total * (slopes[i] / S_total);
+                else
+                    caps[i] = 0.0;
             }
 
-            // 数値誤差のための補正（h = sumのようにするってことかね）
-            if (depthSum <= 0.0) continue;
-            double scale = 1.0;
-            if (fabs(depthSum - h) > 1e-12) {
-                scale = h / depthSum;
-            }
-            for (int i = 0; i < 8; ++i) depthPot[i] *= scale;
-
-            // 3)各方向にcap(dh/2)を適用しつつ、合計がhを超えないようにする
-            double cappedSum = 0.0;
-            double caps[8]; //移動の中継
-            for (int i = 0; i < 8; ++i) {
-                if (depthPot[i] <= 0.0) { caps[i] = 0.0; continue; }
-                double cap = (dhs[i] > 0.0) ? (dhs[i] / 2.0) : 0.0;
-                caps[i] = min(depthPot[i], cap);
-                cappedSum += caps[i];
-            }
-
-            //が h を超える場合は比例縮小
-
-            // 最終チェック：合計がほぼ h になるように残差を最大 cap 方向に入れる
+            // 3)条件を加える必要があれば変更する
 
 
             // 4)nextwaterに適用
@@ -103,9 +94,10 @@ void simulateWaterFlow(vector<vector<double>>& water, const vector<vector<int>>&
             }
         }
     }
-        cout << "MD8_simple _overcap _count: " << overCapCount << "\n";
-
-        water = nextWater;
+    
+    cout << "MD8_simple _overcap _count: " << overCapCount << "\n";
+    
+    water = nextWater;
     
 
 
