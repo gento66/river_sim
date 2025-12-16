@@ -596,10 +596,10 @@ int main() {
             string filename2 = "image2/mix_step_" + to_string(step) + ".png";
             MixImage("image/dem_output.png", filename1, filename2);
         }
+
+
+
     }
-
-
-
 
     makeCsv(water); //水深だね
 
