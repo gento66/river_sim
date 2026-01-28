@@ -17,6 +17,7 @@
 #include <sstream>
 #include <iomanip>
 #include <cmath>
+#include <chrono>
 #include "tinyxml2.h"  // TinyXML2
 #define PI 3.141592653589793
 std::vector<std::pair<int, int>> riverCells;// 川のセルの座標を記録
@@ -179,7 +180,7 @@ vector<vector<double>> makeSlope(const vector<vector<double>>& data, int width, 
             slope[i][j] = slope_deg; // データを格納
         }
     }
-    cout << "slope_0:" << ct << "\n";
+    //cout << "slope_0:" << ct << "\n";
     return slope;
 }
 
@@ -277,7 +278,7 @@ vector<vector<double>> TotalHeight(const vector<vector<double>>& data, const vec
 }
 
 
-
+/*
 // 水 + 標高（グレースケール）これは標高に依存しすぎるため、あまり使えないかもね
 void saveWaterDemImage(const vector<vector<double>>& surface, const string& filename) {
     int height = surface.size();
@@ -311,7 +312,7 @@ void saveWaterDemImage(const vector<vector<double>>& surface, const string& file
     }
 
 }
-
+*/
 
 int main() {
 
@@ -346,20 +347,7 @@ int main() {
     // 全域に5cmの水を置く
     vector<vector<double>> water = WaterDepth(width, height);
 
-    /*
-    // 表示テスト
-    for (const auto& row : data) {
-        for (double d : row) {
-            cout << fixed << setprecision(1) << d << " ";
-            c++;
-        }
-        cout << endl;
-    }
-    cout << c << endl;
-    */
-
-
-
+    
     // 標高画像生成
     if (!data.empty()) {
 
@@ -468,7 +456,12 @@ int main() {
     }
 
 
+    
 
+
+
+    // 計測開始時刻
+    auto start = std::chrono::high_resolution_clock::now();
 
 
     double rainfall_mm_per_hour = 50.0;     // 毎時
@@ -488,6 +481,7 @@ int main() {
         //    }
         //}
 
+        
         if (t == 0) {
             // 水深高画像
             //string filename1 = "image/water_step_" + to_string(t + 1) + ".png";
@@ -500,7 +494,7 @@ int main() {
             string filename2 = "image2/mix_step_" + to_string(t) + ".png";
             MixImage("image/dem_output.png", filename1, filename2);
         }
-
+        
 
 
         //更新処理
@@ -519,58 +513,16 @@ int main() {
                 if (h > max) max = h;
             }
         }
-        cout << t + 1 << ":maxslope:" << max << " minslope:" << min << endl;
+        //cout << t + 1 << ":maxslope:" << max << " minslope:" << min << endl;
 
         double totalWater = 0.0;
         for (const auto& row : water)
             for (double d : row) totalWater += d;
-        cout << "Total water: " << totalWater << " m\n";
+        //cout << "Total water: " << totalWater << " m\n";
 
         simulateWaterFlow(water, waterDir, surface, width, height, DT);// simulation**************************************
 
-
-        //if ((t + 1) >= 1000) {
-        //    if ((t + 1) % 50 == 0) {
-        //        // 水深高画像
-        //        //string filename1 = "image/water_step_" + to_string(t + 1) + ".png";
-        //        std::ostringstream oss;
-        //        oss << "image/water_step_" << std::setw(4) << std::setfill('0') << (t + 1) << ".png";
-        //        std::string filename1 = oss.str();
-        //        saveWaterDepthAsImage(water, filename1); //水深画像の生成します
-
-        //        // 地形 + 水深 の画像
-        //        string filename2 = "image2/mix_step_" + to_string(t + 1) + ".png";
-        //        MixImage("image/dem_output.png", filename1, filename2);
-        //    }
-        //}else {
-        //    if ((t + 1) % 25 == 0) {
-        //        // 水深高画像
-        //        //string filename1 = "image/water_step_" + to_string(t + 1) + ".png";
-        //        std::ostringstream oss;
-        //        oss << "image/water_step_" << std::setw(4) << std::setfill('0') << (t + 1) << ".png";
-        //        std::string filename1 = oss.str();
-        //        saveWaterDepthAsImage(water, filename1); //水深画像の生成します
-
-        //        // 地形 + 水深 の画像
-        //        string filename2 = "image2/mix_step_" + to_string(t + 1) + ".png";
-        //        MixImage("image/dem_output.png", filename1, filename2);
-        //    }
-        //}
-
-        //if ((t + 1) % 25 == 0) {
-        //    if ((t + 1) > 1000 && (t + 1) % 2 != 0) continue;
-        //    // 水深高画像
-        //    //string filename1 = "image/water_step_" + to_string(t + 1) + ".png";
-        //    ostringstream oss;
-        //    oss << "image/water_step_" << setw(4) << setfill('0') << (t + 1) << ".png";
-        //    string filename1 = oss.str();
-        //    saveWaterDepthAsImage(water, filename1); //水深画像の生成します
-
-        //    // 地形 + 水深 の画像
-        //    string filename2 = "image2/mix_step_" + to_string(t + 1) + ".png";
-        //    MixImage("image/dem_output.png", filename1, filename2);
-        //}
-
+        
         int step = t + 1;
         bool save = false;
 
@@ -593,28 +545,37 @@ int main() {
             saveWaterDepthAsImage(water, filename1);
 
             string filename2 = "image2/mix_step_" + to_string(step) + ".png";
-            MixImage("image/dem_output.png", filename1, filename2);
+            //MixImage("image/dem_output.png", filename1, filename2);
         }
+        
 
 
     }
 
-    makeCsv(water); //水深だね
+    // 終了時刻
+    auto end = std::chrono::high_resolution_clock::now();
+
+    // 経過時間（秒）
+    std::chrono::duration<double> elapsed = end - start;
+    std::cout << "実行時間: " << elapsed.count() << " 秒" << std::endl;
 
 
+    //makeCsv(water); //水深だね
+
+    /*
     //csv作ってみる
-    ofstream file("data.csv");
+    ofstream file("slope.csv");
     if (!file) {
         cerr << "ファイルを開けません\n";
     }
     for (size_t i = 0; i < data.size(); i++) {
         for (size_t j = 0; j < data[i].size(); j++) {
-            file << data[i][j] << "\n";
+            file << slope[i][j] << "\n";
 
         }
     }
     file.close(); 
-
+    */
     
 
 

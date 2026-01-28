@@ -68,8 +68,8 @@ void simulateWaterFlow(vector<vector<double>>& water, const vector<vector<int>>&
             nextWater[targetY][targetX] += outFlow;
         }
     }
-    cout << "overwater_h:" << ok << "\n";
-    cout << "ss:" << ss << "\n";
+    //cout << "overwater_h:" << ok << "\n";
+    //cout << "ss:" << ss << "\n";
     // Œ‹‰Ê‚ð water ‚Éã‘‚«
     water = nextWater;
 }
